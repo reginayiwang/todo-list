@@ -14,22 +14,6 @@ function createTodo(todo) {
     newTodo.append(todo);
     newTodo.appendChild(deleteBtn);
 
-    box.addEventListener("click", function() {
-        if (box.checked) {
-            box.parentElement.style.textDecoration = "line-through";
-            todoMap.set(box.nextSibling.textContent, true);
-        } else {
-            box.parentElement.style.textDecoration = "none";
-            todoMap.set(box.nextSibling.textContent, false);
-        }
-        
-    });
-
-    deleteBtn.addEventListener("click", function() {
-        todoMap.delete(deleteBtn.previousSibling.textContent);
-        deleteBtn.parentElement.remove();
-    });
-
     if (todoMap.has(todo)) {
         if (todoMap.get(todo)) {
             box.checked = true;
@@ -54,6 +38,19 @@ form.addEventListener("submit", function(event) {
     event.preventDefault();
     createTodo(input.value);
 });
+
+list.addEventListener("click", function(event) {
+    if (event.target.tagName === "BUTTON") {
+        let btn = event.target;
+        todoMap.delete(btn.previousSibling.textContent);
+        btn.parentElement.remove();
+    } else if (event.target.tagName === "INPUT") {
+        let clickedBox = event.target;
+        clickedBox.parentElement.style.textDecoration = clickedBox.checked ? "line-through" : "none";
+        todoMap.set(clickedBox.nextSibling.textContent, clickedBox.checked);
+    }
+    
+})
 
 window.addEventListener("beforeunload", function() {
     localStorage.setItem("todoMap", JSON.stringify(Array.from(todoMap.entries())));
